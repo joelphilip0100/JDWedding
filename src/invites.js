@@ -63,7 +63,7 @@ export const INVITES = {
       date: W.date,
       hint: 'Break the seal to open',
     },
-    invitation: ['Together with our families,', 'we ask you to stand with us', 'as we are married'],
+    invitation: ['Together with our families,', 'we ask you to stand with us', 'as we are getting married'],
     countdownLead: 'Until we are married',
     families: {
       eyebrow: 'With the blessing of our families',
