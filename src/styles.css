@@ -22,15 +22,14 @@
 
 *{box-sizing:border-box;}
 /* NOT scroll-behavior:smooth — nothing here uses in-page anchor jumps,
-   and a global smooth-scroll fights every programmatic scrollBy/scrollTo
-   the walk and snap-back make each frame. Chrome honours the per-call
-   {behavior:'instant'} override fine, but Safari's engine (WebKit — also
-   what Chrome on iPhone runs on, since Apple requires it) doesn't
-   reliably respect that override against a CSS-level smooth setting, so
-   on iOS every nudge started a smooth animation the next nudge
-   immediately cancelled and the page never actually moved. Removing the
-   blanket rule fixes it everywhere instead of chasing per-browser quirks. */
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+   and a global smooth-scroll fights the programmatic scrolling the walk
+   and snap-back do every frame (the JS now writes .scrollTop directly
+   instead, which sidesteps this entirely, but there's still no reason to
+   keep a rule nothing here uses). overflow-anchor is off for the same
+   family of reason: the browser's own "hold my place while content
+   shifts" correction can otherwise fight the walk too, on any browser,
+   whenever the heavy 3D canvas or a font/image load nudges layout. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-anchor:none;}
 /* while the card is sealed, nothing behind it may move — including
    iOS rubber-band and pull-to-refresh */
 html.is-locked,body.is-locked{
@@ -616,7 +615,7 @@ canvas{display:block;}
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
   color:var(--gold-dp);overflow:hidden;
 }
-.frame__inner img{width:100%;height:100%;object-fit:cover;}
+.frame__inner img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;}
 .frame__inner span{font-family:var(--script);font-weight:600;font-size:1.15rem;}
 .frame__corner{position:absolute;width:46px;color:var(--gold-dp);opacity:.6;}
 .frame__corner--a{top:-14px;left:-14px;}

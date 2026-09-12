@@ -67,7 +67,7 @@ export const INVITES = {
     countdownLead: 'Until we are married',
     families: {
       eyebrow: 'With the blessing of our families',
-      lede: 'Two families, one joyful promise — we would be honoured to have you beside us in church as we begin.',
+      lede: 'Two hearts, one joyful promise — we would be honoured to have you beside us in church as we begin.',
     },
     signOff: `${W.date} · ${W.venue.short}`,
     closing: 'We look forward to seeing you at the church.',
@@ -89,7 +89,7 @@ export const INVITES = {
     countdownLead: 'Until we are married',
     families: {
       eyebrow: 'With the blessing of our families',
-      lede: 'Two families, one joyful promise — we would be honoured to have you beside us in church, and again at the table afterwards.',
+      lede: 'Two hearts, one joyful promise — we would be honoured to have you beside us in church, and again at the table afterwards.',
     },
     signOff: `${W.date} & ${R.date} · ${W.venue.short} & ${R.venue.short}`,
     closing: 'We look forward to seeing you.',
@@ -111,7 +111,7 @@ export const INVITES = {
     countdownLead: 'Until we celebrate',
     families: {
       eyebrow: 'With the blessing of our families',
-      lede: 'Two families, one joyful promise — we would be honoured to have you with us as we celebrate.',
+      lede: 'Two hearts, one joyful promise — we would be honoured to have you with us as we celebrate.',
     },
     signOff: `${R.date} · ${R.venue.short}`,
     closing: 'We look forward to celebrating with you.',

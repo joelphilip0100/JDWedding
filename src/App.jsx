@@ -13,7 +13,7 @@ import { currentInvite } from './invites.js'
 // just resumes at whatever pace this sets once they stop. The walk itself
 // only covers the ground up to the families section (see STOP_SELECTOR
 // below) — once it arrives there it stops for good.
-const AUTO_SCROLL_SECONDS = 10
+const AUTO_SCROLL_SECONDS = 14
 
 // Where the automatic walk ends. Once the page has scrolled this element
 // to the top of the screen, the walk stops permanently — no resuming, even
@@ -173,6 +173,14 @@ export default function App() {
     // so the scene has a moment to settle first
     const startedAt = performance.now() + 300
 
+    // Whichever element actually scrolls the page — html or body,
+    // depending on the browser's quirks mode. Reading and writing
+    // .scrollTop on it directly (rather than window.scrollY / scrollBy)
+    // is the one scroll primitive that has never been subject to
+    // scroll-behavior:smooth in any browser, so it can't be fought by a
+    // stray CSS rule the way scrollTo/scrollBy can.
+    const scroller = document.scrollingElement || document.documentElement
+
     // The absolute document position (in px from the very top of the
     // page) where the stop element currently sits. Read fresh each tick
     // rather than cached once, since fonts/images loading can shift
@@ -180,7 +188,7 @@ export default function App() {
     const stopY = () => {
       const el = document.querySelector(STOP_SELECTOR)
       if (!el) return null
-      return el.getBoundingClientRect().top + window.scrollY
+      return el.getBoundingClientRect().top + scroller.scrollTop
     }
 
     // How many seconds of actual "walking" have elapsed — only ticks up
@@ -218,7 +226,7 @@ export default function App() {
         return
       }
 
-      const current = window.scrollY
+      const current = scroller.scrollTop
 
       if (!walkDone) {
         if (current >= target - 0.5) {
@@ -228,17 +236,13 @@ export default function App() {
           const idealY = Math.min(target, (target / AUTO_SCROLL_SECONDS) * walked)
           const step = (idealY - current) * (1 - Math.exp(-EASE * dt))
           if (step > 0.05) {
-            // 'instant' bypasses the page's CSS scroll-behavior:smooth —
-            // without it, each of these per-frame nudges re-triggers a
-            // new smooth-scroll animation that cancels the last one
-            // before it finishes, and the page never actually moves
-            window.scrollBy({ top: step, behavior: 'instant' })
+            scroller.scrollTop = current + step
           }
         }
       } else if (current < target - 0.5 && now - lastInput > IDLE_SNAP) {
         const step = (target - current) * (1 - Math.exp(-SNAP_EASE * dt))
         if (step > 0.05) {
-          window.scrollBy({ top: step, behavior: 'instant' })
+          scroller.scrollTop = current + step
         }
       }
 
