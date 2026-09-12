@@ -193,6 +193,46 @@ canvas{display:block;}
   filter:drop-shadow(0 10px 14px rgba(96,68,16,.42));
   animation:seal-beat 2.6s ease-in-out infinite;
 }
+/* a big, layered gold halo behind the seal — a wide soft glow plus a
+   brighter inner one, breathing out of phase so it reads as radiant
+   rather than a flat glow. Applies wherever <Gate> is used, so it is
+   the same on all three invitations. */
+.seal::before{
+  content:"";
+  position:absolute;
+  inset:-70%;
+  z-index:-2;
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(255,226,160,.5) 0%,
+    rgba(255,205,110,.26) 45%,
+    rgba(255,205,110,0) 75%);
+  filter:blur(5px);
+  animation:seal-aura-outer 3.4s ease-in-out infinite;
+  pointer-events:none;
+}
+.seal::after{
+  content:"";
+  position:absolute;
+  inset:-38%;
+  z-index:-1;
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(255,241,204,.95) 0%,
+    rgba(255,219,140,.62) 42%,
+    rgba(255,197,102,0) 76%);
+  filter:blur(1.5px);
+  animation:seal-aura-inner 2.6s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes seal-aura-outer{
+  0%,100%{opacity:.5;transform:scale(.88);}
+  50%{opacity:1;transform:scale(1.28);}
+}
+@keyframes seal-aura-inner{
+  0%,100%{opacity:.68;transform:scale(.93);}
+  50%{opacity:1;transform:scale(1.2);}
+}
 @keyframes seal-beat{
   0%,100%{transform:scale(1);}
   8%{transform:scale(1.055);}
@@ -204,6 +244,7 @@ canvas{display:block;}
 .seal:active{animation:none;transform:scale(.94);}
 .seal:focus-visible{outline:2px solid var(--gold-dp);outline-offset:8px;border-radius:50%;}
 .gate.is-open .seal{animation:none;opacity:0;transform:scale(1.9) rotate(14deg);}
+.gate.is-open .seal::before,.gate.is-open .seal::after{opacity:0;}
 .seal svg{width:100%;height:100%;}
 .seal text{
   font-family:var(--script);
@@ -214,13 +255,20 @@ canvas{display:block;}
 }
 .gate__hint{
   font-family:var(--body);
-  font-style:italic;
-  color:var(--ink-soft);
-  font-size:1.02rem;
+  font-style:normal;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold-dp);
+  font-size:clamp(1.15rem,4.6vw,1.45rem);
   margin:0;
-  animation:pulse 3s ease-in-out infinite;
+  text-shadow:
+    0 0 10px rgba(255,244,214,.95),
+    0 0 20px rgba(255,220,150,.75),
+    0 0 34px rgba(255,197,102,.5);
+  animation:pulse 2s ease-in-out infinite;
 }
-@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.68;transform:scale(1);}50%{opacity:1;transform:scale(1.05);}}
 
 /* the celebration */
 .fireworks{
@@ -719,6 +767,6 @@ canvas{display:block;}
 
 @media (prefers-reduced-motion:reduce){
   .rise{transition:none;opacity:1;transform:none;}
-  .gate__hint,.seal{animation:none;}
+  .gate__hint,.seal,.seal::before,.seal::after{animation:none;}
   .gate__panel,.gate__plate{transition-duration:.2s;}
 }

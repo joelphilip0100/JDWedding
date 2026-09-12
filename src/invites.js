@@ -61,9 +61,9 @@ export const INVITES = {
     gate: {
       eyebrow: 'Together with our families',
       date: W.date,
-      hint: 'Break the seal to open',
+      hint: 'Press the seal to open',
     },
-    invitation: ['Together with our families,', 'we ask you to stand with us', 'as we are getting married'],
+    invitation: ['Together with our families,', 'we invite you to stand with us', 'as we are getting married'],
     countdownLead: 'Until we are married',
     families: {
       eyebrow: 'With the blessing of our families',
@@ -83,7 +83,7 @@ export const INVITES = {
     gate: {
       eyebrow: 'Together with our families',
       date: `${W.date}  &  ${R.date}`,
-      hint: 'Break the seal to open',
+      hint: 'Press the seal to open',
     },
     invitation: ['Together with our families,', 'we ask you to join us for', 'both days of our celebration'],
     countdownLead: 'Until we are married',
@@ -105,7 +105,7 @@ export const INVITES = {
     gate: {
       eyebrow: 'Together with our families',
       date: R.date,
-      hint: 'Break the seal to open',
+      hint: 'Press the seal to open',
     },
     invitation: ['Together with our families,', 'we ask you to join us', 'to celebrate the occasion'],
     countdownLead: 'Until we celebrate',
