@@ -21,7 +21,16 @@
 }
 
 *{box-sizing:border-box;}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+/* NOT scroll-behavior:smooth — nothing here uses in-page anchor jumps,
+   and a global smooth-scroll fights every programmatic scrollBy/scrollTo
+   the walk and snap-back make each frame. Chrome honours the per-call
+   {behavior:'instant'} override fine, but Safari's engine (WebKit — also
+   what Chrome on iPhone runs on, since Apple requires it) doesn't
+   reliably respect that override against a CSS-level smooth setting, so
+   on iOS every nudge started a smooth animation the next nudge
+   immediately cancelled and the page never actually moved. Removing the
+   blanket rule fixes it everywhere instead of chasing per-browser quirks. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 /* while the card is sealed, nothing behind it may move — including
    iOS rubber-band and pull-to-refresh */
 html.is-locked,body.is-locked{
@@ -710,7 +719,6 @@ canvas{display:block;}
 .rise.is-in{opacity:1;transform:none;}
 
 @media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto;}
   .rise{transition:none;opacity:1;transform:none;}
   .gate__hint,.seal{animation:none;}
   .gate__panel,.gate__plate{transition-duration:.2s;}
