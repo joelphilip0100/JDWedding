@@ -32,7 +32,10 @@ export default function Sections({ invite }) {
   return (
     <div ref={ref}>
       {/* ---------------- the families ---------------- */}
-      <section className="leaf leaf--paper">
+      {/* section-families: also the marker the auto-scroll walk stops at
+          (see STOP_SELECTOR in App.jsx) — keep this class on whichever
+          element should be the end of the walk. */}
+      <section className="leaf leaf--paper section-families">
         <CornerFiligree className="leaf__corner leaf__corner--tl" />
         <CornerFiligree className="leaf__corner leaf__corner--br" />
         <div className="leaf__in rise">
@@ -72,20 +75,25 @@ export default function Sections({ invite }) {
       </section>
 
 
-      {/* ---------------- where to come ---------------- */}
-      <section className="leaf leaf--paper">
-        <CornerFiligree className="leaf__corner leaf__corner--tl" />
-        <CornerFiligree className="leaf__corner leaf__corner--br" />
-        <div className="leaf__in rise">
-          <div className="eyebrow">Where to find us</div>
-          <div className="rule">
-            <i />
-            <Fleuron />
-            <i />
-          </div>
-          <div className="venues" data-n={invite.events.length}>
-            {invite.events.map((e) => (
-              <article className="venue" key={e.key}>
+      {/* ---------------- where to come ----------------
+          One card per event, each its own scroll-revealed section, so a
+          wedding-and-reception guest meets them one at a time rather than
+          side by side. */}
+      {invite.events.map((e) => (
+        <section className="leaf leaf--paper" key={e.key}>
+          <CornerFiligree className="leaf__corner leaf__corner--tl" />
+          <CornerFiligree className="leaf__corner leaf__corner--br" />
+          <div className="leaf__in rise">
+            <div className="eyebrow">
+              {invite.events.length > 1 ? `Where to find us — ${e.label}` : 'Where to find us'}
+            </div>
+            <div className="rule">
+              <i />
+              <Fleuron />
+              <i />
+            </div>
+            <div className="venues" data-n="1">
+              <article className="venue">
                 <div className="venue__tag u-caps">{e.label}</div>
                 <h3 className="venue__name">{e.venue.name}</h3>
                 <div className="venue__when">
@@ -97,10 +105,10 @@ export default function Sections({ invite }) {
                   <span>Open in Maps</span>
                 </a>
               </article>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ))}
 
       {/* ---------------- the verse ---------------- */}
       <section className="leaf leaf--night">

@@ -87,13 +87,13 @@ export function Crest({ label = 'JD', ...props }) {
       {/* the two letters, overlapping so they interlock */}
       <text
         x="47" y="76" textAnchor="middle" fill="currentColor"
-        style={{ fontFamily: '"Parisienne",cursive', fontSize: '56px' }}
+        style={{ fontFamily: '"Dancing Script",cursive', fontWeight: 700, fontSize: '56px' }}
       >
         {first}
       </text>
       <text
         x="73" y="82" textAnchor="middle" fill="currentColor"
-        style={{ fontFamily: '"Parisienne",cursive', fontSize: '56px' }}
+        style={{ fontFamily: '"Dancing Script",cursive', fontWeight: 700, fontSize: '56px' }}
       >
         {second}
       </text>

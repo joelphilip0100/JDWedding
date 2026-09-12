@@ -868,10 +868,10 @@ const BED = [
 function Verge({ blossom, quality }) {
   const counts =
     quality === 'low'
-      ? { mounds: 320, heads: 4200, cobbles: 190 }
+      ? { mounds: 320, heads: 3000, cobbles: 190 }
       : quality === 'mid'
-        ? { mounds: 640, heads: 8600, cobbles: 320 }
-        : { mounds: 1020, heads: 14000, cobbles: 520 }
+        ? { mounds: 640, heads: 5800, cobbles: 320 }
+        : { mounds: 1020, heads: 9500, cobbles: 520 }
 
   /* the mounds of foliage the flowers sit on */
   const beds = useMemo(() => {
@@ -1033,7 +1033,7 @@ const MEADOW = [
 ]
 
 function Meadow({ blossom, quality }) {
-  const count = quality === 'low' ? 30000 : quality === 'mid' ? 62000 : 112000
+  const count = quality === 'low' ? 16000 : quality === 'mid' ? 38000 : 70000
 
   const heads = useMemo(() => {
     const rnd = seeded(31415)
@@ -1413,27 +1413,16 @@ function SkyFireworks({ quality }) {
 function CameraRig({ progress }) {
   const { camera } = useThree()
   const look = useRef(new THREE.Vector3(0, 3.5, -20))
-  const ptr = useRef({ x: 0, y: 0 })
-  useLayoutEffect(() => {
-    const onMove = (e) => {
-      const t = e.touches ? e.touches[0] : e
-      ptr.current.x = (t.clientX / window.innerWidth) * 2 - 1
-      ptr.current.y = (t.clientY / window.innerHeight) * 2 - 1
-    }
-    window.addEventListener('pointermove', onMove, { passive: true })
-    return () => window.removeEventListener('pointermove', onMove)
-  }, [])
   useFrame((state, delta) => {
     const t = progress.current
     const u = THREE.MathUtils.clamp(t * 0.55, 0, 0.995)
     const p = PATH.getPointAt(u)
     const tan = PATH.getTangentAt(u)
     const height = 2.75 + t * t * 1.7
-    V2.set(p.x - tan.x * 0.6 + ptr.current.x * 0.55, height - ptr.current.y * 0.24, p.z - tan.z * 0.6)
+    V2.set(p.x - tan.x * 0.6, height, p.z - tan.z * 0.6)
     const ahead = PATH.getPointAt(Math.min(u + 0.13, 1))
     V.set(ahead.x, 3.5, ahead.z)
     V.lerp(new THREE.Vector3(CHURCH.x, 6.4 + t * 1.4, CHURCH.z + 11), THREE.MathUtils.smoothstep(t, 0.3, 0.94))
-    V.x += ptr.current.x * 0.5
     const k = 1 - Math.pow(0.0009, delta)
     camera.position.lerp(V2, k)
     look.current.lerp(V, k)
@@ -1486,7 +1475,9 @@ export default function Scene({ progress, quality }) {
         intensity={3.1}
         color="#ffd39a"
         castShadow
-        shadow-mapSize={quality === 'low' ? [1024, 1024] : [2048, 2048]}
+        shadow-mapSize={
+          quality === 'low' ? [1024, 1024] : quality === 'mid' ? [1536, 1536] : [2048, 2048]
+        }
         shadow-camera-near={1}
         shadow-camera-far={140}
         shadow-camera-left={-32}

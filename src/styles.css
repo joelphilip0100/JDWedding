@@ -16,7 +16,7 @@
   --rule:rgba(138,106,34,.36);
   --rule-lt:rgba(230,200,126,.36);
   /* type */
-  --script:"Parisienne",cursive;
+  --script:"Dancing Script",cursive;
   --body:"Cormorant Garamond",Georgia,serif;
 }
 
@@ -145,7 +145,7 @@ canvas{display:block;}
 }
 .gate__names{
   font-family:var(--script);
-  font-weight:400;
+  font-weight:600;
   font-size:clamp(3rem,13vw,5.4rem);
   line-height:1.02;
   margin:0;
@@ -166,6 +166,7 @@ canvas{display:block;}
 .gate__rule svg{width:13px;height:22px;color:var(--gold);flex:none;}
 .gate__date{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.15rem,4vw,1.5rem);
   color:var(--ink-soft);
   letter-spacing:.04em;
@@ -198,6 +199,7 @@ canvas{display:block;}
 .seal svg{width:100%;height:100%;}
 .seal text{
   font-family:var(--script);
+  font-weight:600;
   font-size:32px;
   fill:#fff2d4;
   opacity:.92;
@@ -274,16 +276,21 @@ canvas{display:block;}
   will-change:opacity,transform;
   pointer-events:none;
 }
-/* a pool of light so the script always has something to sit on */
+/* the barest wash of light, not a card — legibility now comes mostly
+   from the halo wrapped directly around each letter (see beat__word and
+   friends below), so this only needs to take the edge off the brightest
+   sky rather than carry the whole job. Kept low-contrast and fully
+   faded well inside its own edge so nothing reads as a panel. */
 .beat::before{
   content:"";
   position:absolute;
   inset:-22% -16%;
   z-index:-1;
-  background:radial-gradient(56% 56% at 50% 48%,
-    rgba(255,251,239,.94),
-    rgba(255,251,239,.66) 46%,
-    rgba(255,251,239,0) 76%);
+  background:radial-gradient(58% 58% at 50% 46%,
+    rgba(255,248,228,.3) 0%,
+    rgba(252,240,210,.2) 30%,
+    rgba(246,229,190,.1) 58%,
+    rgba(238,213,166,0) 100%);
   pointer-events:none;
 }
 .beat--title{top:8%;}
@@ -294,19 +301,31 @@ canvas{display:block;}
 
 .beat__word{
   font-family:var(--script);
-  font-weight:400;
+  font-weight:600;
   font-size:clamp(3.6rem,15vw,6.4rem);
   line-height:1;
   margin:0;
-  color:#6a4a12;
-  text-shadow:0 2px 0 rgba(255,252,238,.85);
+  color:#5c3f0e;
+  text-shadow:
+    0 0 4px rgba(255,255,255,.95),
+    0 0 10px rgba(255,251,240,.9),
+    0 0 22px rgba(255,248,228,.85),
+    0 2px 0 rgba(255,252,238,.6),
+    0 0 34px rgba(74,52,14,.22);
 }
 .beat__names{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.5rem,5.6vw,2.2rem);
   color:#4a3610;
   margin-top:.5em;
   line-height:1.25;
+  text-shadow:
+    0 0 3px rgba(255,255,255,.95),
+    0 0 7px rgba(255,251,240,.9),
+    0 0 14px rgba(255,248,228,.85),
+    0 1px 0 rgba(255,252,238,.6),
+    0 0 20px rgba(74,52,14,.2);
 }
 .beat__amp{color:var(--gold);padding:0 .3em;}
 
@@ -320,27 +339,45 @@ canvas{display:block;}
 /* one short thought per beat, set large enough to read at a glance */
 .beat__line{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(2rem,7.6vw,3.1rem);
   line-height:1.4;
-  color:#4a3610;
+  color:#3c2a0c;
   margin:0;
-  text-shadow:0 2px 0 rgba(255,252,238,.7);
+  text-shadow:
+    0 0 4px rgba(255,255,255,.95),
+    0 0 10px rgba(255,251,240,.9),
+    0 0 22px rgba(255,248,228,.85),
+    0 2px 0 rgba(255,252,238,.55),
+    0 0 34px rgba(74,52,14,.22);
 }
 .beat__lead{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(2.2rem,8.4vw,3.5rem);
   line-height:1.28;
-  color:#5c4413;
+  color:#4d380f;
   margin:0;
-  text-shadow:0 2px 0 rgba(255,252,238,.75);
+  text-shadow:
+    0 0 4px rgba(255,255,255,.95),
+    0 0 10px rgba(255,251,240,.9),
+    0 0 22px rgba(255,248,228,.85),
+    0 2px 0 rgba(255,252,238,.55),
+    0 0 34px rgba(74,52,14,.22);
 }
 .beat__sub{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.45rem,5.4vw,2.1rem);
   line-height:1.4;
-  color:#7a5c1e;
+  color:#66491a;
   margin:.45em 0 0;
-  text-shadow:0 1px 0 rgba(255,252,238,.7);
+  text-shadow:
+    0 0 3px rgba(255,255,255,.95),
+    0 0 7px rgba(255,251,240,.9),
+    0 0 14px rgba(255,248,228,.85),
+    0 1px 0 rgba(255,252,238,.55),
+    0 0 20px rgba(74,52,14,.2);
 }
 
 /* which of the two days this beat is about */
@@ -400,6 +437,7 @@ canvas{display:block;}
 .plate__corner--b{bottom:-2px;right:-2px;transform:scale(-1,-1);}
 .plate__label{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.5rem,5.4vw,2rem);
   color:var(--gold-dp);
   margin-bottom:.6em;
@@ -423,6 +461,7 @@ canvas{display:block;}
 .clock__u{
   display:block;
   font-family:var(--script);
+  font-weight:600;
   font-style:normal;
   font-size:clamp(.8rem,2.9vw,1.02rem);
   color:var(--gold-dp);
@@ -430,60 +469,17 @@ canvas{display:block;}
 }
 .plate__done{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.9rem,6.6vw,2.6rem);
   color:#4a3610;
 }
-
-/* the invitation to scroll, made plain */
-.cue{
-  position:absolute;
-  bottom:6.5%;
-  left:50%;
-  translate:-50% 0;
-  z-index:5;
-  color:var(--gold-dp);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:.45em;
-  pointer-events:none;
-  opacity:0;
-  transform:translateY(16px);
-  transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.3,1);
-}
-.cue.is-on{opacity:1;transform:none;}
-.cue::before{
-  content:"";
-  position:absolute;
-  inset:-45% -60%;
-  z-index:-1;
-  background:radial-gradient(52% 52% at 50% 50%,rgba(255,251,239,.9),rgba(255,251,239,0) 72%);
-}
-.cue__word{
-  font-family:var(--script);
-  font-size:clamp(1.3rem,4.8vw,1.8rem);
-  line-height:1;
-  color:#6a4a12;
-  text-shadow:0 2px 0 rgba(255,252,238,.85);
-}
-.cue__line{
-  width:1px;
-  height:clamp(20px,3.6vh,34px);
-  background:linear-gradient(180deg,transparent,var(--gold-dp));
-  opacity:.75;
-}
-.cue__arrow{
-  width:clamp(26px,6vw,34px);
-  height:clamp(26px,6vw,34px);
-  animation:bob 2.1s ease-in-out infinite;
-}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
 
 .loading{
   position:absolute;inset:0;z-index:6;
   display:flex;align-items:center;justify-content:center;
   background:linear-gradient(180deg,#f8e0ae,#eab27e);
   font-family:var(--script);
+  font-weight:600;
   font-size:1.6rem;color:var(--gold-dp);
   transition:opacity .8s ease,visibility .8s ease;
 }
@@ -533,6 +529,7 @@ canvas{display:block;}
 
 .title{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(2.6rem,9vw,3.6rem);
   text-align:center;
   color:#5c4413;
@@ -543,6 +540,7 @@ canvas{display:block;}
 .lede{
   text-align:center;
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.5rem,5.2vw,2rem);
   line-height:1.45;
   color:#5c4413;
@@ -567,6 +565,7 @@ canvas{display:block;}
 }
 .who{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(2.1rem,7.4vw,2.8rem);
   color:#5c4413;margin:0 0 .28em;line-height:1.12;
 }
@@ -578,6 +577,7 @@ canvas{display:block;}
 .verse{
   text-align:center;
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.9rem,6.6vw,2.7rem);
   line-height:1.5;max-width:20ch;margin:0 auto;
   color:var(--cream-2);
@@ -608,7 +608,7 @@ canvas{display:block;}
   color:var(--gold-dp);overflow:hidden;
 }
 .frame__inner img{width:100%;height:100%;object-fit:cover;}
-.frame__inner span{font-family:var(--script);font-size:1.15rem;}
+.frame__inner span{font-family:var(--script);font-weight:600;font-size:1.15rem;}
 .frame__corner{position:absolute;width:46px;color:var(--gold-dp);opacity:.6;}
 .frame__corner--a{top:-14px;left:-14px;}
 .frame__corner--b{bottom:-14px;right:-14px;transform:scale(-1,-1);}
@@ -617,11 +617,13 @@ canvas{display:block;}
 .sign__crest{width:clamp(60px,11vmin,86px);margin:0 auto 1.4em;color:var(--gold-lt);}
 .sign__names{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(2.8rem,10vw,4rem);
   color:var(--gold-lt);line-height:1.1;
 }
 .sign__date{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.2rem,4.2vw,1.5rem);
   color:var(--gold);margin-top:.9em;
 }
@@ -664,7 +666,7 @@ canvas{display:block;}
 }
 .venue__name{
   font-family:var(--script);
-  font-weight:400;
+  font-weight:600;
   font-size:clamp(1.75rem,6.4vw,2.35rem);
   line-height:1.22;
   color:var(--ink);
@@ -672,6 +674,7 @@ canvas{display:block;}
 }
 .venue__when{
   font-family:var(--script);
+  font-weight:600;
   font-size:clamp(1.15rem,4.4vw,1.45rem);
   color:var(--gold-dp);
   margin-top:.42em;
@@ -709,7 +712,6 @@ canvas{display:block;}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   .rise{transition:none;opacity:1;transform:none;}
-  .cue__arrow,.gate__hint,.seal{animation:none;}
-  .cue{transition-duration:.2s;}
+  .gate__hint,.seal{animation:none;}
   .gate__panel,.gate__plate{transition-duration:.2s;}
 }

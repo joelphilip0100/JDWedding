@@ -1,5 +1,5 @@
-import { useRef, useEffect, useMemo, useImperativeHandle, forwardRef } from 'react'
-import { Crest, Fleuron, Chevron, Pin } from './Ornaments.jsx'
+import { useRef, useMemo, useImperativeHandle, forwardRef } from 'react'
+import { Crest, Fleuron, Pin } from './Ornaments.jsx'
 import Countdown from './Countdown.jsx'
 import { COUPLE } from '../config.js'
 
@@ -18,8 +18,6 @@ const band = (t, inA, inB, outA, outB) => Math.min(ramp(t, inA, inB), 1 - ramp(t
 const Overlay = forwardRef(function Overlay({ invite }, ref) {
   const title = useRef()
   const count = useRef()
-  const cue = useRef()
-  const cueWord = useRef()
   const mids = useRef([])
 
   /* The middle beats: the invitation line, then one card per event.
@@ -39,22 +37,6 @@ const Overlay = forwardRef(function Overlay({ invite }, ref) {
       return [a, a + w * 0.26, a + w * 0.6, a + w * 0.9]
     })
   }, [beats])
-
-  /* The scroll cue: on once the card is open, off the moment they move,
-     and back again if they sit still for ten seconds. */
-  const idle = useRef(null)
-  const moved = useRef(false)
-  const showCue = (on) => {
-    if (cue.current) cue.current.classList.toggle('is-on', on)
-  }
-  const armIdle = () => {
-    window.clearTimeout(idle.current)
-    idle.current = window.setTimeout(() => {
-      if (cueWord.current) cueWord.current.textContent = 'Keep scrolling'
-      showCue(true)
-    }, 10000)
-  }
-  useEffect(() => () => window.clearTimeout(idle.current), [])
 
   useImperativeHandle(ref, () => ({
     apply(t) {
@@ -78,23 +60,6 @@ const Overlay = forwardRef(function Overlay({ invite }, ref) {
       // and the countdown, which stays
       const e = ramp(t, 0.9, 0.97)
       set(count.current, e, (1 - e) * 26)
-
-      if (t > 0.004) {
-        if (!moved.current) {
-          moved.current = true
-          if (cueWord.current) cueWord.current.textContent = 'Keep scrolling'
-        }
-        showCue(false)
-        if (t > 0.985) window.clearTimeout(idle.current)
-        else armIdle()
-      } else if (moved.current) {
-        showCue(true)
-      }
-    },
-
-    /* called when the seal breaks, so the cue fades in with the scene */
-    reveal() {
-      window.setTimeout(() => showCue(true), 520)
     },
   }))
 
@@ -161,14 +126,6 @@ const Overlay = forwardRef(function Overlay({ invite }, ref) {
 
       <div className="beat beat--count" ref={count} style={hidden}>
         <Countdown iso={invite.countdownTo.iso} label={invite.countdownLead} />
-      </div>
-
-      <div className="cue" ref={cue}>
-        <span className="cue__word" ref={cueWord}>
-          Scroll to begin
-        </span>
-        <span className="cue__line" />
-        <Chevron className="cue__arrow" />
       </div>
     </>
   )

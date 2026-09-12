@@ -18,8 +18,8 @@ export const VENUES = {
   },
   hall: {
     name: 'Girideepam Convention Centre',
-    place: 'Kottayam, Kerala',
-    short: 'Kottayam',
+    place: 'Trivandrum, Kerala',
+    short: 'Trivandrum',
     map: 'https://share.google/daMLVwdGgqBvFZjy6',
   },
 }
@@ -59,14 +59,14 @@ export const INVITES = {
     countdownTo: W,
     docTitle: 'Joel & Diya | Wedding Invitation',
     gate: {
-      eyebrow: 'Together with their families',
+      eyebrow: 'Together with our families',
       date: W.date,
       hint: 'Break the seal to open',
     },
-    invitation: ['Together with their families,', 'we ask you to stand with us', 'as we are married'],
+    invitation: ['Together with our families,', 'we ask you to stand with us', 'as we are married'],
     countdownLead: 'Until we are married',
     families: {
-      eyebrow: 'With the blessing of their families',
+      eyebrow: 'With the blessing of our families',
       lede: 'Two families, one joyful promise — we would be honoured to have you beside us in church as we begin.',
     },
     signOff: `${W.date} · ${W.venue.short}`,
@@ -81,18 +81,18 @@ export const INVITES = {
     countdownTo: W,
     docTitle: 'Joel & Diya | Wedding & Reception Invitation',
     gate: {
-      eyebrow: 'Together with their families',
+      eyebrow: 'Together with our families',
       date: `${W.date}  &  ${R.date}`,
       hint: 'Break the seal to open',
     },
-    invitation: ['Together with their families,', 'we ask you to join us for', 'both days of our celebration'],
+    invitation: ['Together with our families,', 'we ask you to join us for', 'both days of our celebration'],
     countdownLead: 'Until we are married',
     families: {
-      eyebrow: 'With the blessing of their families',
+      eyebrow: 'With the blessing of our families',
       lede: 'Two families, one joyful promise — we would be honoured to have you beside us in church, and again at the table afterwards.',
     },
-    signOff: `${W.date} & ${R.date} · Kottayam`,
-    closing: 'We look forward to seeing you on both days.',
+    signOff: `${W.date} & ${R.date} · ${W.venue.short} & ${R.venue.short}`,
+    closing: 'We look forward to seeing you.',
   },
 
   /* ---------------- the reception, for the wider circle ---------------- */
@@ -103,15 +103,15 @@ export const INVITES = {
     countdownTo: R,
     docTitle: 'Joel & Diya | Reception Invitation',
     gate: {
-      eyebrow: 'Together with their families',
+      eyebrow: 'Together with our families',
       date: R.date,
       hint: 'Break the seal to open',
     },
-    invitation: ['Newly married,', 'we ask you to join us', 'to celebrate over dinner'],
+    invitation: ['Together with our families,', 'we ask you to join us', 'to celebrate the occasion'],
     countdownLead: 'Until we celebrate',
     families: {
-      eyebrow: 'With the blessing of their families',
-      lede: 'Two families, one joyful promise — we would be honoured to have you at our table as we celebrate.',
+      eyebrow: 'With the blessing of our families',
+      lede: 'Two families, one joyful promise — we would be honoured to have you with us as we celebrate.',
     },
     signOff: `${R.date} · ${R.venue.short}`,
     closing: 'We look forward to celebrating with you.',
