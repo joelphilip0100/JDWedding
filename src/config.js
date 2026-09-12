@@ -15,10 +15,10 @@ export const COUPLE = {
 export const CEREMONY = {
   // ISO 8601 with the offset baked in, so the countdown is identical
   // for a guest in Kochi and a guest in Chicago.
-  iso: '2026-10-21T15:30:00+05:30',
+  iso: '2026-10-21T17:00:00+05:30',
   dayLine: '21 · 10 · 2026',
   yearLine: '2026',
-  timeLine: 'Wednesday  ·  3:30 PM',
+  timeLine: 'Wednesday  ·  5:00 PM',
   venue: 'St. George Orthodox Church',
   venueLine2: 'Puthuppally, Kottayam, Kerala',
   shortDate: '21 · 10 · 2026',

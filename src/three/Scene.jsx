@@ -15,7 +15,7 @@ import {
   AUTUMN,
   BLOOMS,
 } from './world.js'
-import { buildMaps, leafTexture, blossomTexture, sparkTexture } from './textures.js'
+import { buildMaps, blossomTexture, sparkTexture } from './textures.js'
 
 const V = new THREE.Vector3()
 const V2 = new THREE.Vector3()
@@ -1123,11 +1123,12 @@ function Meadow({ blossom, quality }) {
 }
 
 /* =====================================================================
-   DRIFTED LEAVES — they lie along the aisle until the couple walk
-   through them, then they are kicked up, caught by the wind, and
-   tumble back down to settle somewhere new.
+   FALLEN PETALS — scattered along the aisle as if strewn there ahead of
+   the couple, they lie still until the couple walk through them, then
+   they are kicked up, caught by the wind, and tumble back down to
+   settle somewhere new.
    ===================================================================== */
-function GroundLeaves({ couple, count, tex, quality }) {
+function GroundLeaves({ couple, count, tex, quality, palette = AUTUMN }) {
   const ref = useRef()
 
   const leaves = useMemo(() => {
@@ -1149,22 +1150,22 @@ function GroundLeaves({ couple, count, tex, quality }) {
         ry: rnd() * Math.PI * 2,
         rz: (rnd() - 0.5) * 0.4,
         wx: 0, wy: 0, wz: 0,
-        s: 0.2 + rnd() * 0.16,
+        s: 0.16 + rnd() * 0.13,
         seed: rnd(),
-        tint: (rnd() * AUTUMN.length) | 0,
+        tint: (rnd() * palette.length) | 0,
         rest: true,
       })
     }
     return out
-  }, [count])
+  }, [count, palette])
 
   useLayoutEffect(() => {
     leaves.forEach((l, i) => {
-      C.set(AUTUMN[l.tint])
+      C.set(palette[l.tint])
       ref.current.setColorAt(i, C)
     })
     if (ref.current.instanceColor) ref.current.instanceColor.needsUpdate = true
-  }, [leaves])
+  }, [leaves, palette])
 
   useFrame((st, dt) => {
     const d = Math.min(dt, 0.04)
@@ -1266,7 +1267,7 @@ function GroundLeaves({ couple, count, tex, quality }) {
       receiveShadow
       castShadow={quality === 'high'}
     >
-      <planeGeometry args={[1, 1.05]} />
+      <planeGeometry args={[1, 1]} />
       <meshStandardMaterial map={tex} alphaTest={0.42} side={THREE.DoubleSide} roughness={0.86} />
     </instancedMesh>
   )
@@ -1447,15 +1448,14 @@ function Wind() {
 export default function Scene({ progress, quality }) {
   const { gl } = useThree()
   const maps = useMemo(() => buildMaps(), [])
-  const leafTex = useMemo(() => leafTexture(), [])
   const blossomTex = useMemo(() => blossomTexture(), [])
   const skyMat = useMemo(() => makeSkyMaterial(), [])
   const sun = useMemo(() => SUN_DIR.clone().multiplyScalar(-90), [])
   const coupleAt = useRef({ p: new THREE.Vector3(), speed: 0 })
-  const drifted = quality === 'low' ? 260 : quality === 'mid' ? 520 : 860
-  // mostly blossom in the air, with a scatter of leaves through it
+  // a thick scatter of petals along the aisle — no leaves at all, only flowers
+  const drifted = quality === 'low' ? 400 : quality === 'mid' ? 720 : 1150
+  // blossom drifting through the air too
   const airFlowers = quality === 'low' ? 55 : quality === 'mid' ? 100 : 150
-  const airLeaves = quality === 'low' ? 18 : quality === 'mid' ? 30 : 46
 
   useEffect(() => {
     gl.toneMapping = THREE.ACESFilmicToneMapping
@@ -1494,13 +1494,12 @@ export default function Scene({ progress, quality }) {
       <Trees maps={maps} quality={quality} />
       <Church maps={maps} quality={quality} />
       {/* Couple is mounted first so it writes its position before the
-          leaves read it in the same frame */}
+          petals read it in the same frame */}
       <Couple progress={progress} maps={maps} report={coupleAt} />
       <Verge blossom={blossomTex} quality={quality} />
       <Meadow blossom={blossomTex} quality={quality} />
-      <GroundLeaves couple={coupleAt} count={drifted} tex={leafTex} quality={quality} />
+      <GroundLeaves couple={coupleAt} count={drifted} tex={blossomTex} palette={BED} quality={quality} />
       <Drift progress={progress} count={airFlowers} tex={blossomTex} palette={BLOOMS} size={0.15} fall={0.3} isFlower />
-      <Drift progress={progress} count={airLeaves} tex={leafTex} palette={AUTUMN} size={0.16} fall={0.38} />
       <SkyFireworks quality={quality} />
 
       <CameraRig progress={progress} />

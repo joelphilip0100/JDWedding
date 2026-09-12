@@ -13,7 +13,7 @@ import { currentInvite } from './invites.js'
 // just resumes at whatever pace this sets once they stop. The walk itself
 // only covers the ground up to the families section (see STOP_SELECTOR
 // below) — once it arrives there it stops for good.
-const AUTO_SCROLL_SECONDS = 14
+const AUTO_SCROLL_SECONDS = 18
 
 // Where the automatic walk ends. Once the page has scrolled this element
 // to the top of the screen, the walk stops permanently — no resuming, even

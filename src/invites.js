@@ -30,10 +30,10 @@ export const EVENTS = {
     label: 'The Wedding',
     // ISO with the offset baked in, so the countdown is the same in
     // Kochi and in Chicago
-    iso: '2026-10-21T15:30:00+05:30',
+    iso: '2026-10-21T17:00:00+05:30',
     date: '21 · 10 · 2026',
     day: 'Wednesday',
-    time: '3:30 PM',
+    time: '5:00 PM',
     venue: VENUES.church,
   },
   reception: {
