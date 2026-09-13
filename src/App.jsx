@@ -10,16 +10,11 @@ import { CornerFiligree } from './ui/Ornaments.jsx'
 import { currentInvite } from './invites.js'
 
 // How long the automatic walk takes, start to finish, if the guest never
-// touches the scroll wheel. Scrolling manually always overrides this — it
-// just resumes at whatever pace this sets once they stop. The walk itself
-// only covers the ground up to the families section (see STOP_SELECTOR
-// below) — once it arrives there it stops for good.
+// touches the page. It walks all the way to the very bottom. The instant
+// the guest scrolls, taps, or presses a key, the walk stops for good —
+// it never resumes and never eases the page back down afterward. From
+// that point on the guest has full, permanent control of the scroll.
 const AUTO_SCROLL_SECONDS = 18
-
-// Where the automatic walk ends. Once the page has scrolled this element
-// to the top of the screen, the walk stops permanently — no resuming, even
-// if the guest scrolls back up and sits idle again.
-const STOP_SELECTOR = '.section-families'
 
 export default function App() {
   /* which of the three invitations this URL is — decided once */
@@ -143,28 +138,49 @@ export default function App() {
   }, [])
 
   /* Once the seal breaks, the bride and groom walk on their own — no one
-     should have to discover that this scrolls. A guest who does scroll
-     always wins: the walk simply pauses while they're actively doing it,
-     then picks back up from wherever they left it. Once the walk has
-     finished, the aisle becomes a one-way vestibule: a guest can always
-     scroll back up to look at the start again, but as soon as they stop
-     scrolling the page eases back down to where the walk ended — it
-     never lets them settle partway through. */
+     should have to discover that this scrolls. The very first touch,
+     scroll, or key press from the guest — at any point, even mid-walk —
+     hands control over for good: the automatic walk stops right where it
+     is and never starts again, and the page is never eased or snapped
+     back to any position afterward. The guest can then scroll freely, in
+     either direction, exactly like an ordinary page. */
   useEffect(() => {
     if (!unlocked) return
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
 
     let raf
     let last = performance.now()
-    let lastInput = 0
-    const markInput = () => {
-      lastInput = performance.now()
+    let stopped = false
+
+    // Whichever element actually scrolls the page — html or body,
+    // depending on the browser's quirks mode. Reading and writing
+    // .scrollTop on it directly (rather than window.scrollY / scrollBy)
+    // is the one scroll primitive that has never been subject to
+    // scroll-behavior:smooth in any browser, so it can't be fought by a
+    // stray CSS rule the way scrollTo/scrollBy can.
+    const scroller = document.scrollingElement || document.documentElement
+
+    // The value we ourselves last wrote to scrollTop. Used to tell our
+    // own programmatic movement apart from a scroll the guest caused —
+    // a scrollbar drag or a trackpad gesture doesn't fire wheel/touch/key
+    // events, so watching for scrollTop drifting away from what we set is
+    // the only reliable way to catch every kind of manual scroll.
+    let lastWritten = scroller.scrollTop
+
+    const stopWalking = () => {
+      stopped = true
     }
     const opts = { passive: true }
-    window.addEventListener('wheel', markInput, opts)
-    window.addEventListener('touchstart', markInput, opts)
-    window.addEventListener('touchmove', markInput, opts)
-    window.addEventListener('keydown', markInput)
+    window.addEventListener('wheel', stopWalking, opts)
+    window.addEventListener('touchstart', stopWalking, opts)
+    window.addEventListener('touchmove', stopWalking, opts)
+    window.addEventListener('keydown', stopWalking)
+
+    const onScroll = () => {
+      if (stopped) return
+      if (Math.abs(scroller.scrollTop - lastWritten) > 1) stopWalking()
+    }
+    window.addEventListener('scroll', onScroll, opts)
 
     // if the tab was backgrounded, don't let the gap while it was hidden
     // count as elapsed walking time — pick up cleanly from "now" instead
@@ -178,28 +194,9 @@ export default function App() {
     // so the scene has a moment to settle first
     const startedAt = performance.now() + 300
 
-    // Whichever element actually scrolls the page — html or body,
-    // depending on the browser's quirks mode. Reading and writing
-    // .scrollTop on it directly (rather than window.scrollY / scrollBy)
-    // is the one scroll primitive that has never been subject to
-    // scroll-behavior:smooth in any browser, so it can't be fought by a
-    // stray CSS rule the way scrollTo/scrollBy can.
-    const scroller = document.scrollingElement || document.documentElement
-
-    // The absolute document position (in px from the very top of the
-    // page) where the stop element currently sits. Read fresh each tick
-    // rather than cached once, since fonts/images loading can shift
-    // layout slightly while the walk is under way.
-    const stopY = () => {
-      const el = document.querySelector(STOP_SELECTOR)
-      if (!el) return null
-      return el.getBoundingClientRect().top + scroller.scrollTop
-    }
-
     // How many seconds of actual "walking" have elapsed — only ticks up
-    // while the walk is actually eligible to move (past the grace period,
-    // not paused for user input). This is what the ideal position below
-    // is paced against, so pausing/resuming never throws the pace off.
+    // once past the grace period. This is what the ideal position below
+    // is paced against.
     let walked = 0
 
     // Rather than nudging the page by a raw per-frame amount (which looks
@@ -209,45 +206,33 @@ export default function App() {
     // That keeps the motion looking smooth and continuous even when the
     // render thread is briefly busy, instead of snapping forward in one
     // big jump to make up for it. Frame-rate independent, so it reads the
-    // same at 30fps as at 60fps. The same easing shape is reused for the
-    // snap-back below, just with its own (faster) rate.
+    // same at 30fps as at 60fps.
     const EASE = 10
-    const IDLE_WALK = 250 // ms of no input before the timed walk resumes
-    const IDLE_SNAP = 600 // ms of no input before a snap-back kicks in
-    const SNAP_EASE = 6
-
-    // Once the timed walk reaches the stop point, it's done for good —
-    // it never re-times itself off "walked" again. From then on the only
-    // job left is the snap-back, below.
-    let walkDone = false
 
     const tick = (now) => {
       const dt = Math.max(0, now - last) / 1000
       last = now
 
-      const target = stopY()
-      if (target == null || target <= 0) {
-        raf = requestAnimationFrame(tick)
-        return
-      }
+      if (stopped) return // guest has taken over — never touch scroll again
 
+      // The full scrollable height of the page, read fresh each tick
+      // rather than cached once, since fonts/images loading (or the
+      // couple's walk itself revealing later sections) can change it
+      // while the walk is under way.
+      const target = Math.max(0, scroller.scrollHeight - window.innerHeight)
       const current = scroller.scrollTop
 
-      if (!walkDone) {
-        if (current >= target - 0.5) {
-          walkDone = true
-        } else if (now > startedAt && now - lastInput > IDLE_WALK) {
-          walked += dt
-          const idealY = Math.min(target, (target / AUTO_SCROLL_SECONDS) * walked)
-          const step = (idealY - current) * (1 - Math.exp(-EASE * dt))
-          if (step > 0.05) {
-            scroller.scrollTop = current + step
-          }
-        }
-      } else if (current < target - 0.5 && now - lastInput > IDLE_SNAP) {
-        const step = (target - current) * (1 - Math.exp(-SNAP_EASE * dt))
+      if (target > 0.5 && current < target - 0.5 && now > startedAt) {
+        walked += dt
+        const idealY = Math.min(target, (target / AUTO_SCROLL_SECONDS) * walked)
+        const step = (idealY - current) * (1 - Math.exp(-EASE * dt))
         if (step > 0.05) {
           scroller.scrollTop = current + step
+          // read back rather than trust the value we wrote — the browser
+          // may clamp it, and lastWritten needs to match reality so the
+          // scroll listener doesn't mistake our own clamped move for one
+          // the guest made
+          lastWritten = scroller.scrollTop
         }
       }
 
@@ -258,10 +243,11 @@ export default function App() {
     return () => {
       cancelAnimationFrame(raf)
       document.removeEventListener('visibilitychange', onVisible)
-      window.removeEventListener('wheel', markInput)
-      window.removeEventListener('touchstart', markInput)
-      window.removeEventListener('touchmove', markInput)
-      window.removeEventListener('keydown', markInput)
+      window.removeEventListener('wheel', stopWalking)
+      window.removeEventListener('touchstart', stopWalking)
+      window.removeEventListener('touchmove', stopWalking)
+      window.removeEventListener('keydown', stopWalking)
+      window.removeEventListener('scroll', onScroll)
     }
   }, [unlocked])
 
