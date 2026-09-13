@@ -609,13 +609,20 @@ function Bride({ maps }) {
         <sphereGeometry args={[0.098, 28, 22]} />
         {skin}
       </mesh>
-      {/* hair sweeping back into a low chignon */}
-      <mesh position={[0, 1.648, -0.016]} scale={[1, 1.1, 1.02]} castShadow>
+      {/* hair sweeping back into a low chignon, with loose strands lying
+          down her back so no skin shows between the hairline and her
+          collar — this is the side a guest actually sees, walking
+          behind her down the aisle */}
+      <mesh position={[0, 1.615, -0.02]} scale={[1.08, 1.36, 1.08]} castShadow>
         <sphereGeometry args={[0.105, 28, 22]} />
         <meshStandardMaterial color={PALETTE.hair} roughness={0.46} />
       </mesh>
-      <mesh position={[0, 1.552, -0.086]} scale={[1.1, 0.9, 1]} castShadow>
-        <sphereGeometry args={[0.068, 20, 16]} />
+      <mesh position={[0, 1.575, -0.075]} scale={[1.05, 1.35, 0.85]} castShadow>
+        <sphereGeometry args={[0.078, 22, 18]} />
+        <meshStandardMaterial color={PALETTE.hair} roughness={0.46} />
+      </mesh>
+      <mesh position={[0, 1.487, -0.07]} scale={[0.92, 1.1, 0.62]} castShadow>
+        <sphereGeometry args={[0.062, 18, 14]} />
         <meshStandardMaterial color={PALETTE.hair} roughness={0.46} />
       </mesh>
 
@@ -725,13 +732,18 @@ function Groom() {
         <sphereGeometry args={[0.09, 20, 16]} />
         {skin}
       </mesh>
-      {/* short hair sitting on the back and crown */}
-      <mesh position={[0, 1.678, -0.014]} scale={[1.02, 1.02, 1.02]} castShadow>
+      {/* short hair sitting on the back and crown, tapered down to meet
+          his collar so there's no bare strip of neck showing from behind */}
+      <mesh position={[0, 1.635, -0.02]} scale={[1.1, 1.32, 1.1]} castShadow>
         <sphereGeometry args={[0.102, 26, 20]} />
         <meshStandardMaterial color={PALETTE.hair} roughness={0.46} />
       </mesh>
       <mesh position={[0, 1.63, -0.055]} scale={[1, 0.86, 0.7]} castShadow>
         <sphereGeometry args={[0.086, 20, 16]} />
+        <meshStandardMaterial color={PALETTE.hair} roughness={0.46} />
+      </mesh>
+      <mesh position={[0, 1.585, -0.058]} scale={[0.95, 1.05, 0.72]} castShadow>
+        <sphereGeometry args={[0.072, 18, 14]} />
         <meshStandardMaterial color={PALETTE.hair} roughness={0.46} />
       </mesh>
     </group>
@@ -750,7 +762,9 @@ function Couple({ progress, maps, report }) {
     const p = PATH.getPointAt(u)
     const tan = PATH.getTangentAt(u)
     group.current.position.set(p.x, 0, p.z)
-    group.current.rotation.y = Math.atan2(tan.x, tan.z) + Math.PI
+    // face the direction they're actually walking (toward the church),
+    // not backward toward the camera
+    group.current.rotation.y = Math.atan2(tan.x, tan.z)
 
     // hand the leaves their position and how briskly they are moving
     if (report) {
