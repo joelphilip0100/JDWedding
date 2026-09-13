@@ -270,6 +270,34 @@ canvas{display:block;}
 }
 @keyframes pulse{0%,100%{opacity:.68;transform:scale(1);}50%{opacity:1;transform:scale(1.05);}}
 
+/* the small mute toggle for the background music, once it has started */
+.music-toggle{
+  position:fixed;
+  top:calc(env(safe-area-inset-top,0px) + 14px);
+  right:calc(env(safe-area-inset-right,0px) + 14px);
+  z-index:200;
+  width:32px;
+  height:32px;
+  border:1px solid rgba(255,244,222,.4);
+  border-radius:50%;
+  background:rgba(40,28,10,.4);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  color:#fceed0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .25s ease,transform .2s ease;
+}
+.music-toggle svg{width:15px;height:15px;}
+.music-toggle:hover{background:rgba(40,28,10,.6);}
+.music-toggle:active{transform:scale(.9);}
+.music-toggle:focus-visible{outline:2px solid var(--gold-lt);outline-offset:2px;}
+
 /* the celebration */
 .fireworks{
   position:fixed;

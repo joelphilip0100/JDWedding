@@ -5,6 +5,7 @@ import Scene from './three/Scene.jsx'
 import Gate from './ui/Gate.jsx'
 import Overlay from './ui/Overlay.jsx'
 import Sections from './ui/Sections.jsx'
+import MusicPlayer from './ui/MusicPlayer.jsx'
 import { CornerFiligree } from './ui/Ornaments.jsx'
 import { currentInvite } from './invites.js'
 
@@ -30,6 +31,7 @@ export default function App() {
   const progress = useRef(0) // 0 → 1 across the sticky scene
   const introRef = useRef()
   const overlayRef = useRef()
+  const musicRef = useRef()
   const [lit, setLit] = useState(false)
   const [unlocked, setUnlocked] = useState(false)
 
@@ -106,6 +108,9 @@ export default function App() {
     document.documentElement.classList.remove('is-locked')
     document.body.classList.remove('is-locked')
     setUnlocked(true)
+    // still inside the click that broke the seal, so the browser still
+    // counts this as a real user gesture and allows audio to start
+    musicRef.current?.start()
   }
 
   /* one scroll listener drives both the camera and the words */
@@ -263,6 +268,7 @@ export default function App() {
   return (
     <>
       <Gate onOpen={unlock} invite={invite} />
+      <MusicPlayer ref={musicRef} />
 
       <div className="intro" ref={introRef}>
         <div className="stage">
