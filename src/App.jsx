@@ -9,12 +9,20 @@ import MusicPlayer from './ui/MusicPlayer.jsx'
 import { CornerFiligree } from './ui/Ornaments.jsx'
 import { currentInvite } from './invites.js'
 
-// How long the automatic walk takes, start to finish, if the guest never
-// touches the page. It walks all the way to the very bottom. The instant
-// the guest scrolls, taps, or presses a key, the walk stops for good —
-// it never resumes and never eases the page back down afterward. From
-// that point on the guest has full, permanent control of the scroll.
+// How long it takes the couple to walk up the aisle and reach the church
+// door, if the guest never touches the page — this is the pace of the
+// "top half" of the scroll and stays exactly as tuned. See CHURCH_SELECTOR.
 const AUTO_SCROLL_SECONDS = 18
+
+// Once the couple arrives here, the walk is over and the rest of the page
+// is just the informational sections (families, venue, RSVP…) — those
+// scroll past at half the speed of the walk above, since there's more to
+// read and less reason to hurry. The instant the guest scrolls, taps, or
+// presses a key, at any point, the walk stops for good — it never resumes
+// and never eases the page back down afterward. From that point on the
+// guest has full, permanent control of the scroll.
+const CHURCH_SELECTOR = '.section-families'
+const AFTER_CHURCH_SPEED = 0.5
 
 export default function App() {
   /* which of the three invitations this URL is — decided once */
@@ -215,17 +223,26 @@ export default function App() {
 
       if (stopped) return // guest has taken over — never touch scroll again
 
-      // The full scrollable height of the page, read fresh each tick
-      // rather than cached once, since fonts/images loading (or the
-      // couple's walk itself revealing later sections) can change it
-      // while the walk is under way.
+      // The full scrollable height of the page, and where the church door
+      // sits within it — both read fresh each tick rather than cached
+      // once, since fonts/images loading (or the couple's walk itself
+      // revealing later sections) can shift layout while under way.
       const target = Math.max(0, scroller.scrollHeight - window.innerHeight)
+      const churchEl = document.querySelector(CHURCH_SELECTOR)
+      const churchY = churchEl ? churchEl.getBoundingClientRect().top + scroller.scrollTop : target
       const current = scroller.scrollTop
 
       if (target > 0.5 && current < target - 0.5 && now > startedAt) {
         walked += dt
-        const idealY = Math.min(target, (target / AUTO_SCROLL_SECONDS) * walked)
-        const step = (idealY - current) * (1 - Math.exp(-EASE * dt))
+        // Same pace as always up to the church door; half that pace for
+        // everything after, so the two halves can be tuned independently
+        // of how much content ends up on either side of that line.
+        const churchSpeed = churchY / AUTO_SCROLL_SECONDS
+        const idealY =
+          walked <= AUTO_SCROLL_SECONDS
+            ? churchSpeed * walked
+            : churchY + churchSpeed * AFTER_CHURCH_SPEED * (walked - AUTO_SCROLL_SECONDS)
+        const step = (Math.min(target, idealY) - current) * (1 - Math.exp(-EASE * dt))
         if (step > 0.05) {
           scroller.scrollTop = current + step
           // read back rather than trust the value we wrote — the browser
