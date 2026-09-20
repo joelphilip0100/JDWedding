@@ -168,27 +168,26 @@ export default function App() {
     // stray CSS rule the way scrollTo/scrollBy can.
     const scroller = document.scrollingElement || document.documentElement
 
-    // The value we ourselves last wrote to scrollTop. Used to tell our
-    // own programmatic movement apart from a scroll the guest caused —
-    // a scrollbar drag or a trackpad gesture doesn't fire wheel/touch/key
-    // events, so watching for scrollTop drifting away from what we set is
-    // the only reliable way to catch every kind of manual scroll.
-    let lastWritten = scroller.scrollTop
-
     const stopWalking = () => {
       stopped = true
     }
     const opts = { passive: true }
+    // Real, deliberate interaction only — wheel and touch cover mobile
+    // scrolling (touchstart alone even catches "just tapped, didn't drag
+    // yet"), keydown covers arrow/space/page keys, and mousedown catches
+    // a scrollbar-thumb drag starting on desktop. Deliberately NOT using
+    // a generic 'scroll' event + scrollTop-drift check here: iOS Safari
+    // is well known for letting a scroll position "jump" or self-correct
+    // on its own right when an overflow:hidden scroll-lock is released
+    // (the same reason libraries like body-scroll-lock avoid overflow:
+    // hidden and use position:fixed instead) — a drift check would read
+    // that native correction as the guest scrolling and freeze the walk
+    // before it ever moves, which is iOS-only and not a real interaction.
     window.addEventListener('wheel', stopWalking, opts)
     window.addEventListener('touchstart', stopWalking, opts)
     window.addEventListener('touchmove', stopWalking, opts)
     window.addEventListener('keydown', stopWalking)
-
-    const onScroll = () => {
-      if (stopped) return
-      if (Math.abs(scroller.scrollTop - lastWritten) > 1) stopWalking()
-    }
-    window.addEventListener('scroll', onScroll, opts)
+    window.addEventListener('mousedown', stopWalking, opts)
 
     // if the tab was backgrounded, don't let the gap while it was hidden
     // count as elapsed walking time — pick up cleanly from "now" instead
@@ -245,11 +244,6 @@ export default function App() {
         const step = (Math.min(target, idealY) - current) * (1 - Math.exp(-EASE * dt))
         if (step > 0.05) {
           scroller.scrollTop = current + step
-          // read back rather than trust the value we wrote — the browser
-          // may clamp it, and lastWritten needs to match reality so the
-          // scroll listener doesn't mistake our own clamped move for one
-          // the guest made
-          lastWritten = scroller.scrollTop
         }
       }
 
@@ -264,7 +258,7 @@ export default function App() {
       window.removeEventListener('touchstart', stopWalking)
       window.removeEventListener('touchmove', stopWalking)
       window.removeEventListener('keydown', stopWalking)
-      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('mousedown', stopWalking)
     }
   }, [unlocked])
 
